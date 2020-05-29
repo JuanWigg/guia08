@@ -1,6 +1,7 @@
 package frsf.isi.died.guia08.problema01.modelo;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class Tarea {
 
@@ -11,10 +12,24 @@ public class Tarea {
 	private LocalDateTime fechaInicio;
 	private LocalDateTime fechaFin;
 	private Boolean facturada;
+	private Integer retraso;
 	
-	public void asignarEmpleado(Empleado e) {
-		// si la tarea ya tiene un empleado asignado
-		// y tiene fecha de finalizado debe lanzar una excepcion
+	public Tarea(Integer id) {
+		this.id = id;
+		this.facturada = false;
+	}
+	public Tarea(Integer id, String descripcion, Integer duracionEstimada) {
+		this.id = id;
+		this.descripcion = descripcion;
+		this.duracionEstimada = duracionEstimada;
+		this.facturada = false;
+	}
+	
+	public void asignarEmpleado(Empleado e) throws TareaAsignadaIncorrectaException {
+		if(this.empleadoAsignado != null && this.fechaFin!=null)
+			throw(new TareaAsignadaIncorrectaException());
+		else
+			this.empleadoAsignado = e;
 	}
 
 	public Integer getId() {
@@ -55,8 +70,14 @@ public class Tarea {
 
 	public void setFechaFin(LocalDateTime fechaFin) {
 		this.fechaFin = fechaFin;
+		LocalDateTime fechaFinEstipulada = fechaInicio.plusDays(this.duracionEstimada/4);
+		long retraso = fechaFinEstipulada.until(fechaInicio, ChronoUnit.DAYS);
+		this.retraso = (int) retraso;
 	}
-
+	
+	public Integer getRetraso() {
+		return this.retraso;
+	}
 	public Boolean getFacturada() {
 		return facturada;
 	}
@@ -68,6 +89,7 @@ public class Tarea {
 	public Empleado getEmpleadoAsignado() {
 		return empleadoAsignado;
 	}
+	
 	
 	
 }
